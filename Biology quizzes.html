@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz App</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+<main id="app" class="max-w-3xl mx-auto px-4 py-8"></main>
+
+<script>
+/* ============================================================
+   QUIZ DATA — replace with your own content.
+   - chapters[].questions[].options : array of answer texts (letters A, B, C… are added automatically)
+   - chapters[].questions[].answer  : array of correct option indexes (0 = A, 1 = B, …).
+       One index  -> instant feedback on click.
+       Several    -> pick all that apply, then press "Check answer".
+   ============================================================ */
+const QUIZ_DATA = {
+ "title": "Biology Quiz",
+ "chapters": [
+  {
+   "id": "celule",
+   "title": "Celule",
+   "questions": [
+    {
+     "q": "Afirmațiile corecte privind celula sunt:",
+     "options": [
+      "Este unitatea de bază morfofuncțională a organizării materiei vii",
+      "Poate exista doar singură",
+      "Poate exista singură sau în grup",
+      "Forma sa este legată de funcție",
+      "Are inițial formă globuloasă"
+     ],
+     "answer": [
+      0,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Forma celulelor:",
+     "options": [
+      "Este legată de funcția lor",
+      "Este inițial globuloasă",
+      "Ulterior se poate modifica",
+      "Ulterior se modifică obligatoriu",
+      "Nu se modifică ulterior la nici o celulă"
+     ],
+     "answer": [
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Dimensiunile celulelor:",
+     "options": [
+      "Variază indiferent de specializarea lor",
+      "Variază și în funcție de vârstă",
+      "Media se considera 20-30 microni",
+      "Sunt identice la toate tipurile de celule",
+      "Sunt cuprinse între 150-200 microni la fibra musculară striată"
+     ],
+     "answer": [
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Părțile componente principale din structura celulei sunt:",
+     "options": [
+      "Lizozomii",
+      "Membrana plasmatică",
+      "Citoplasmă",
+      "Hialoplasma",
+      "Nucleul"
+     ],
+     "answer": [
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Plasmalema:",
+     "options": [
+      "Înconjoară celula",
+      "Este alcătuită doar din proteine",
+      "Este alcătuită doar din fosfolipide",
+      "Separă structurile interne ale celulei de mediul extracelular",
+      "Conferă forma celulei"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "În structura plasmalemei:",
+     "options": [
+      "Se găsesc, în principal, fosfolipide și proteine",
+      "Se găsesc numai glicoproteine și glicolipide",
+      "Fosfolipidele sunt astfel dispuse, încât porțiunea lor hidrofobă formează un bistrat",
+      "Miezul hidrofil al stratului fosfolipidic restricționează pasajul transmembranar al moleculelor hidrosolubile și al ionilor",
+      "Componenta proteică realizează mecanismele de transport transmembranar"
+     ],
+     "answer": [
+      0,
+      4
+     ]
+    },
+    {
+     "q": "Proteinele din structura membranei celulare:",
+     "options": [
+      "Realizează funcțiile specializate ale membranei",
+      "Se pot afla doar pe fața internă a membranei",
+      "Se pot afla doar pe fața externă a membranei",
+      "Se pot afla pe fața internă și externă a membranei, precum și transmembranar",
+      "Nu sunt uniform distribuite în cadrul structurii lipidice"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Structura membranei celulare:",
+     "options": [
+      "Cuprinde, în principal, fosfolipide și proteine",
+      "Cuprinde, atașate pe fața externă, și glucide puternic încărcate negativ",
+      "Are o distribuție uniformă a proteinelor în cadrul structurii lipidice",
+      "Constituie modelul mozaic fluid",
+      "Cuprinde, atașate pe fața externă, și glucide puternic încărcate pozitiv"
+     ],
+     "answer": [
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Prelungirile citoplasmei unor celule, acoperite de plasmalemă:",
+     "options": [
+      "Sunt numai temporare",
+      "Pot fi temporare și neordonate de tipul pseudopodelor (hematii)",
+      "Pot fi permanente de tipul pseudopodelor (leucocite)",
+      "Formează microvilii epiteliului mucoasei intestinului",
+      "Formează corpusculi de legătură care solidarizează celulele epiteliale"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Citoplasm:",
+     "options": [
+      "Este un sistem coloidal cu structură simplă",
+      "Este un sistem coloidal cu structură complexă",
+      "La nivelul ei se desfășoară principalele funcții vitale B. Faza dispersată este apa C. Mediul de dispersie este reprezentat de miceliile coloidale"
+     ],
+     "answer": [
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Citoplasma celulei:",
+     "options": [
+      "Se numește hialoplasmă",
+      "Conține numai organite citoplasmatice comune tuturor celulelor",
+      "Are o parte nestructurată (organitele citoplasmatice) și o parte structurată (hialoplasma)",
+      "Are o parte structurată (organitele citoplasmatice) și o parte nestructurată (hialoplasma)",
+      "Mediul de dispersie este apa"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Organitele comune tuturor celulelor sunt:",
+     "options": [
+      "Reticulul endoplasmic",
+      "Neurofibrilele",
+      "Miofibrilele",
+      "Mitocondriile",
+      "Ribozomii"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Nu sunt organite comune:",
+     "options": [
+      "Ribozomii",
+      "Miofibrilele",
+      "Mitocondriile",
+      "Lizozomii",
+      "Centrozomul"
+     ],
+     "answer": [
+      1
+     ]
+    },
+    {
+     "q": "Referitor la organitele comune următoarele afirmații sunt adevărate:",
+     "options": [
+      "Reticulul endoplasmic rugos prezintă pe suprafața externa, ribozomi",
+      "Reticulul endoplasmic neted leagă plasmalema de nucleu",
+      "Reticulul endoplasmic neted este o rețea de citomembrane",
+      "Reticulul endoplasmic neted are rol în excreția substanțelor celulare",
+      "Reticulul endoplasmic rugos este un sistem format din macro și microvezicule"
+     ],
+     "answer": [
+      0,
+      2
+     ]
+    },
+    {
+     "q": "Reticulul endoplasmic neted:",
+     "options": [
+      "Este un sistem canalicular, care leagă plasmalema de stratul intern al membranei nucleare",
+      "Este un sistem circulator intracitoplasmatic",
+      "Este o rețea de citomembrane",
+      "Are rol important în metabolismul glicogenului",
+      "Prezintă pe suprafața externă, ribozomi"
+     ],
+     "answer": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Ribozomii:",
+     "options": [
+      "Sunt granule bogate în lipide",
+      "Au rol în excreția unor substanțe celulare",
+      "Reprezintă sediul sintezei proteice",
+      "Pot fi atașați de membrana externă nucleară",
+      "Au dimensiuni care variază între 150-250 nm"
+     ],
+     "answer": [
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Ribozomii reprezintă sediul sintezei:",
+     "options": [
+      "Acizilor grași",
+      "Lipidelor",
+      "Proteinelor",
+      "Aminoacizilor",
+      "Glicogenului"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Aparatul Golgi:",
+     "options": [
+      "Este un sistem membranar",
+      "Este constituit din macrovezicule și din cisterne rotunde",
+      "Se situează în apropierea nucleului",
+      "Are rol în excreția unor substanțe celulare",
+      "Reprezintă sediul sintezei proteice"
+     ],
+     "answer": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Mitocondriile:",
+     "options": [
+      "Au formă sferică",
+      "Prezintă membrană externă și internă separate de un interspațiu",
+      "Prezintă perete de structura trilaminară de natură lipidică",
+      "Conțin în matricea mitocondrială sisteme enzimatice care realizează fosforilarea oxidativă",
+      "Rol în diviziunea celulară"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Sediul fosforilării oxidative cu eliberare de energie este reprezentat de:",
+     "options": [
+      "Aparatul Golgi",
+      "Lizozomii",
+      "Mitocondrii",
+      "Desmozomii",
+      "Ergostoplasma"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Lizozomii:",
+     "options": [
+      "Sunt corpusculi sferici",
+      "Sunt răspândiți în întreaga hialoplasmă",
+      "Conțin enzime hidrolitice",
+      "Reprezintă sediul fosforilării oxidative",
+      "Rol în sinteza de proteine"
+     ],
+     "answer": [
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Lizozomii:",
+     "options": [
+      "Sunt organite celulare comune",
+      "Conțin enzime hidrolitice",
+      "Au rol în sinteza de proteine și colagen",
+      "Sunt prezenți și în celulele fagocitare (hematii și macrofage)",
+      "Reprezintă sediul fosforilării oxidative"
+     ],
+     "answer": [
+      0,
+      1
+     ]
+    },
+    {
+     "q": "Centrozomul:",
+     "options": [
+      "Este situat în apropierea nucleului",
+      "Conține un centriol sferic",
+      "Are rol în diviziunea celulară",
+      "Lipsește în celulele sangvine",
+      "Are rol în sinteza proteică"
+     ],
+     "answer": [
+      0,
+      2
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile corecte cu privire la organitele comune tuturor celulelor:",
+     "options": [
+      "Miofibrilele sunt elemente contractile din sarcoplasma fibrelor musculare",
+      "Dictiozomii intervin în excreția unor substanțe celulare",
+      "Ribozomii joacă rol direct în sinteza glucozei",
+      "Mitocondriile prezinta in interior matricea mitocondriala",
+      "Centrozomul este prezent în neuroni"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Corpusculii Nissl:",
+     "options": [
+      "Sunt organite celulare comune",
+      "Au rol în sinteza de proteine",
+      "Se găsesc în interiorul nucleului",
+      "Sunt echivalenți ai ergostoplasmei pentru celula nervoasă",
+      "Au rol în transportul transmembranar"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Nucleul:",
+     "options": [
+      "Are numai poziție centrală în celulă",
+      "Are de obicei forma celulei",
+      "Lipsește în hematia adultă",
+      "Este întotdeauna unic în celulă",
+      "Conține material genetic"
+     ],
+     "answer": [
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Nucleul:",
+     "options": [
+      "Este o parte constitutivă principală a citoplasmei",
+      "Controlează metabolismul celular",
+      "Este unic în hepatocite",
+      "Sediul fosforilării oxidative",
+      "Are în celulă poziție centrală sau excentrică"
+     ],
+     "answer": [
+      1,
+      4
+     ]
+    },
+    {
+     "q": "Membrana nucleară:",
+     "options": [
+      "Este poroasă",
+      "Este dublă, cu structură trilaminată",
+      "Prezintă două foițe separate prin spațiul perinuclear",
+      "Prezintă ribozomi pe foița internă",
+      "Foița externă se continuă cu citomemnele reticulului endoplasmatic"
+     ],
+     "answer": [
+      0,
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Carioplasma:",
+     "options": [
+      "Se află sub membrana celulară",
+      "Este o soluție coloidală cu aspect neomogen",
+      "Prezintă o rețea de filamente subțiri formate din granulații fine de cromatină",
+      "Cuprinde întotdeauna numai un nucleol",
+      "Prin cromatină se formează cromozomii la sfârșitul diviziunii celulare"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Cromozomii:",
+     "options": [
+      "Se formează la sfârșitul diviziunii celulare",
+      "Sunt alcătuiți numai din ADN și ARN ribozomal",
+      "Conțin și proteine histonice și nonhistonice",
+      "Conțin cantități mici de glucide și ioni de Ca și Na",
+      "Conțin și cantități mici de lipide și ioni de Ca și Mg"
+     ],
+     "answer": [
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Următoarele afirmații sunt false:",
+     "options": [
+      "Membrana celulară prezintă permeabilitate selectivă",
+      "Membrana celulară asigură schimb bidirecțional de substanțe",
+      "Trasportul pasiv nu necesită energie",
+      "Difuziunea și osmoza sunt mecanisme de transport prin membrană ce nu necesită cărăuși",
+      "Difuziunea și osmoza sunt mecanisme de transport prin membrană ce necesită cărăuși"
+     ],
+     "answer": [
+      4
+     ]
+    },
+    {
+     "q": "Membrana celulară:",
+     "options": [
+      "Prezintă permeabilitate selectivă pentru toate moleculele și toți ionii",
+      "Permite un schimb bidirecțional de substanțe nutritive și produși ai catabolismului celular",
+      "Permite un transfer ionic, cu apariția curenților electrici",
+      "Reprezintă o barieră în difuziunea moleculelor nepolarizate",
+      "Trasportul pasiv nu necesită energie"
+     ],
+     "answer": [
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Mecanismele de transport prin membrană:",
+     "options": [
+      "Se realizează activ care necesită cheltuială energetică",
+      "Include procese pasive: difuziunea, osmoza și difuziunea facilitată",
+      "Necesită proteine transportoare",
+      "Asigură transferul gazelor respiratorii: O2 și CO2",
+      "Transportul pasiv este reprezentat numai prin osmoză"
+     ],
+     "answer": [
+      0,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Transportul activ prin membrane include:",
+     "options": [
+      "Difuziunea",
+      "Osmoza",
+      "Transport pe calea veziculelor prin pinocitoză",
+      "Proteine transportoare - energie - ATP",
+      "Transferul împotriva unui gradient de concentrație"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Referitor la difuziunea transmembranară:",
+     "options": [
+      "Sunt necesare proteine membranare transportoare",
+      "Se consumă energie",
+      "Intervine gradientul de concentrație între două soluții de o parte și de alta a membranei",
+      "Nu sunt necesare proteine membranare transportoare",
+      "Membrana nu permite pasajul ionic liber"
+     ],
+     "answer": [
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Pot difuza transmembranar:",
+     "options": [
+      "Molecule nepolarizate (liposolubile)",
+      "Hormonii proteici",
+      "Hormonii steroizi",
+      "Dioxidul de carbon, ureea",
+      "Glucoza"
+     ],
+     "answer": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Osmoza:",
+     "options": [
+      "Reprezintă difuziunea apei (solvitului) dintr-o soluție",
+      "Pentru a se produce este necesar ca membrana sa fie semipermeabilă",
+      "Presupune o membrană mai permeabilă pentru moleculele de solvit decât pentru cele de solvent",
+      "Constă în trecerea apei din compartimentul cu soluție mai diluată, către cel cu soluție mai concentrată",
+      "Constă în trecerea apei din compartimentul cu soluție mai concentrată, către cel cu soluție mai diluată"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Presiunea osmotică:",
+     "options": [
+      "Reprezintă forța care trebuie aplicată a preveni osmoza",
+      "Este proporțională cu numărul de particule dizolvate în soluție",
+      "Este proporțională cu concentrația moleculelor de solvit",
+      "Necesita consum de energie",
+      "Reprezintă forța care trebuie aplicata a favoriza osmoza"
+     ],
+     "answer": [
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Transportul transmembranar activ:",
+     "options": [
+      "Se realizează prin mecanisme care utilizează proteine transportoare",
+      "Se realizează prin osmoză",
+      "Se realizează prin eliberare de energie furnizată de ATP",
+      "Poate fi primar și secundar",
+      "Asigură transportul transmembranar de etanol și hormoni steroizi"
+     ],
+     "answer": [
+      0,
+      3
+     ]
+    },
+    {
+     "q": "Prin intermediul proteinelor transportoare, transportul transmembranar se realizează prin:",
+     "options": [
+      "Difuziune",
+      "Difuziune facilitată",
+      "Osmoza",
+      "Transport activ primar prin pompe",
+      "Tranport pasiv (cotransport)"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Transportul transmembranar vezicular:",
+     "options": [
+      "Este o categorie specială de transport",
+      "Se realizează prin endocitoză și exocitoză",
+      "Se realizează prin captarea materialului extracelular în vezicule formate prin invaginarea membranei nucleare și transferat intranuclear",
+      "Se realizează prin captarea materialului intracelular în vezicule care vor fuziona cu membrana celulară iar conținutul lor va fi eliminat din celulă",
+      "Forme particulare de exocitoză sunt fagocitoza și pinocitoza"
+     ],
+     "answer": [
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Potențialul de membrană este rezultatul:",
+     "options": [
+      "Permeabilității selective a hialoplasmei",
+      "Prezenței intracelulare a moleculelor nedifuzibile încărcate negativ",
+      "Și a activității pompei Na+/K+",
+      "Activității pompei Na+/Mg+",
+      "Distribuției inegale a sarcinilor de o parte și de alta a membranei celulare"
+     ],
+     "answer": [
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Potențialul membranar de repaus:",
+     "options": [
+      "Presupune lipsa producerii de impulsuri electrice la nivelul membranei",
+      "Are o valoare medie cuprinsă între -70 mV și -85 mV",
+      "Presupune menținerea relativ constantă a concentrației intracelulare a ionilor de Na+",
+      "Valoarea lui se datorează activității pompei Na+/K+",
+      "În absența unui stimul se menține constant"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Potențialul membranar de repaus:",
+     "options": [
+      "Se realizează prin funcționarea pompei de Na+ și K+",
+      "Nu depinde de moleculele nedifuzibile localizate intracelular",
+      "Are o valoare apropiată de potențialul de echilibru pentru Ca+",
+      "Are o valoare medie cuprinsă între -65 mV și -85 mV",
+      "În prezența unui stimul se menține constant"
+     ],
+     "answer": [
+      0,
+      3
+     ]
+    },
+    {
+     "q": "Despre potențialul de acțiune se poate afirma că:",
+     "options": [
+      "Este modificarea temporară a potențialului de membrană",
+      "Celulele nestimulate electric generează potențiale de acțiune",
+      "Principiul de bază este identic pentru toate tipurile de celule",
+      "Perioada refractară absolută este ultima fază a potențialului de acțiune",
+      "Respectă legea „totul sau nimic\""
+     ],
+     "answer": [
+      0,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Potențialul de acțiune:",
+     "options": [
+      "Este modificarea temporară a potențialului de membrană",
+      "Este modificarea definitivă a potențialului de membrană",
+      "Este diferit în funcție de tipul de celulă",
+      "Se datorează unor curenți electrici care apar la trecerea ionilor, prin canale membranare specifice",
+      "Se desfășoară în trei faze"
+     ],
+     "answer": [
+      0,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Potențialul de acțiune al neuronului se desfășoară în următoarele faze:",
+     "options": [
+      "Pragul",
+      "Panta ascendentă",
+      "Platoul",
+      "Panta descendentă",
+      "Perioada refractară absolută"
+     ],
+     "answer": [
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Alegeți afirmațiile corecte privind perioada refractară absolută:",
+     "options": [
+      "Presupune obținerea unui nou potențial de acțiune la intensități mici ale stimulului",
+      "Nu permite obținerea unui nou potențial de acțiune, indiferent de intensitatea stimulului",
+      "Cuprinde numai panta ascendentă a potențialului de acțiune",
+      "Cuprinde numai panta descendentă a potențialului de acțiune",
+      "Se datorează inactivării canalelor pentru K᫈"
+     ],
+     "answer": [
+      1
+     ]
+    },
+    {
+     "q": "Pe parcursul perioadei refractare relative:",
+     "options": [
+      "Se inactivează canalele pentru Mg᫈",
+      "Se poate iniția un al doilea potențial de acțiune",
+      "Potențialul de acțiune nou obținut are o amplitudine mai mare decât în mod normal",
+      "Nu se poate obține un nou potențial de acțiune, indiferent de intensitatea stimulului",
+      "Potențialul de acțiune nou obținut are o viteza de apariție a pantei ascendente mai mare"
+     ],
+     "answer": [
+      1
+     ]
+    },
+    {
+     "q": "Sub acțiunea unui stimul de valoare prag:",
+     "options": [
+      "Valoarea potențialului de membrană ajunge la un nivel critic - potențialul prag",
+      "Se deschid canalele de Na᫈ şi Na᫈-ul iese din celula",
+      "Se deschid canalul de K᫈ şi K᫈-ul intră în celula",
+      "Se activează pompa de Na᫈ şi K᫈",
+      "Crește permeabilitatea membranei pentru Na᫈"
+     ],
+     "answer": [
+      0,
+      4
+     ]
+    },
+    {
+     "q": "Proprietățile speciale ale celulelor sunt:",
+     "options": [
+      "Sinteza proteică",
+      "Contractilitatea musculară",
+      "Metabolismul celular",
+      "Secreția endocrinä",
+      "Secreția exocrină"
+     ],
+     "answer": [
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile adevărate:",
+     "options": [
+      "Dimensiunile celulelor variază numai în funcție de vârsta lor",
+      "Hematia are dimensiunea de 10 μ",
+      "Hematia are formă cilindrică",
+      "Ovulul are dimensiunea de 150-200μ",
+      "Inițial, toate celulele au formă globuloasă"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Afirmațiile corecte privind membrana plasmatică sunt:",
+     "options": [
+      "Conferă forma celulei",
+      "Separă structurile interne ale celulei de mediul extracelular",
+      "Proteinele din structura membranei celulare se pot afla doar pe fața externă a membranei",
+      "Componenta proteicā realizează numai mecanismele de transport transmembranar",
+      "Cuprinde, în principal, fosfolipide și proteine"
+     ],
+     "answer": [
+      0,
+      1,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile false privind plasmalema:",
+     "options": [
+      "Proteinele din structura membranei celulare se pot afla doar pe fața internă a membranei",
+      "Proteinele din structura membranei celulare sunt uniform distribuite în cadrul structurii lipidice.",
+      "Proteinele din structura membranei celulare nu sunt uniform distribuite în cadrul structurii lipidice",
+      "Cuprinde, ataşate pe fața externă, şi glucide puternic încărcate pozitiv",
+      "Cuprinde, în principal, fosfolipide şi proteine"
+     ],
+     "answer": [
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Privind difuziunea transmembranară este adevărat:",
+     "options": [
+      "Nu se consumă energie",
+      "Sunt necesare proteine membranare transportoare",
+      "Intervine gradientul de concentrație între două soluții de o parte și de alta a membranei",
+      "Ureca nu poate difuza",
+      "Glucoza poate difuza"
+     ],
+     "answer": [
+      0,
+      2
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile false privind mecanismele care utilizează proteine transportoare:",
+     "options": [
+      "Este saturabil",
+      "Nu poate apărea competiție între moleculele de transportat pentru aceeaşi proteină",
+      "Difuziunea facilitată nu necesită energie pentru transport",
+      "Transportul activ se realizează prin eliberare de energie furnizată de ATP",
+      "Transportul activ se realizează prin consum de energie furnizată de ADP"
+     ],
+     "answer": [
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Potențialul membranar de repaus:",
+     "options": [
+      "Are o valoare medie cuprinsă între -65 mV şi - 85 mV",
+      "Valoarea lui nu depinde de permeabilitatea membranei pentru diferitele tipuri de ioni",
+      "Are o valoare apropiată de potențialul de echilibru pentru K᫈",
+      "Valoarea lui nu se datorează activității pompei Na᫈/K᫈",
+      "Presupune lipsa producerii de impulsuri electrice la nivelul membranei"
+     ],
+     "answer": [
+      0,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Potențialul de acțiune:",
+     "options": [
+      "Are aceeaşi durată pentru neuron şi fibra musculară netedă de la nivelul antrului gastric",
+      "Celulele stimulate electric generează potențiale de repaus",
+      "Aspectul este acelaşi pentru toate tipurile de celule",
+      "Este modificarea definitivă a potențialului de membrană",
+      "Se desfăşoară în patru faze"
+     ],
+     "answer": [
+      0
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile false privind perioada refractară:",
+     "options": [
+      "Reprezintă un interval de timp pe parcursul căruia este dificil de obținut un potențial de acțiune",
+      "Pe parcursul perioadei refractare relative se inactivează canalele pentru Na᫈",
+      "In perioada refractară absolută nu se poate obține un nou potențial de acțiune",
+      "În perioada refractară relativă se poate iniția un nou potențial de acțiune",
+      "În perioada refractară relativă se poate iniția un nou potențial de acțiune la intensități mici ale stimulului"
+     ],
+     "answer": [
+      1,
+      4
+     ]
+    },
+    {
+     "q": "Membrana nucleară:",
+     "options": [
+      "Este triplă",
+      "Are structura trilaminată",
+      "Prezintă ribozomi pe foița externă",
+      "Foița internă se continuă cu citomembranele reticulului endoplasmatic",
+      "Sub membrană se află carioplasma"
+     ],
+     "answer": [
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile adevărate, cu excepția:",
+     "options": [
+      "Transformarea energiei chimice a unor compuşi în energie mecanică reprezintă proprietatea celulelor musculare",
+      "Fibra musculară striată are 5-15 mm",
+      "Panta ascendentă a potențialului de acțiune se datorează creşterii permeabilității membranei nucleare pentru Na᫈",
+      "În osmoză, se produce difuziunea apei dintr-o soluție",
+      "Carioplasma este o soluție omogenă, coloidală"
+     ],
+     "answer": [
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile adevărate:",
+     "options": [
+      "Celulele cartilaginoase au formă cilindrică",
+      "Leucocitele conțin enzime hidrolitice",
+      "Centrosfera centrosomului este reprezentată de doi centrioli cilindrici",
+      "Difuziunea facilitată este un tip de transport saturabil iar moleculele se deplasează împotriva gradientului de concentrație",
+      "Mitocondriile prezintă un perete cu o structură trilaminară (înveliș extern și înveliș intern)"
+     ],
+     "answer": [
+      1
+     ]
+    },
+    {
+     "q": "Privind membrana plasmatică:",
+     "options": [
+      "Conține și glucide transmembranar",
+      "Miezul hidrofob restricționează pasajul moleculelor liposolubile şi al ionilor",
+      "Tubii renali au epiteliul cu prelungiri de tipul desmozomilor",
+      "Plasmalema conține colesterol",
+      "Datorită structurii lipidice modelul structural a fost denumit modelul mozaic fluid"
+     ],
+     "answer": [
+      3
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile false privind citoplasma celulei:",
+     "options": [
+      "Ergastoplasma are rol în sinteza de proteine",
+      "Conține și incluziuni de tipul pigmenților",
+      "Dictiozomii reprezintă un sistem membranar situat în apropierea nucleolului",
+      "Hialoplasma este un sistem coloidal",
+      "Corpusculii lui Palade sunt organite bogate în ribonucleolipide, de forma unor granule ovale sau rotunde"
+     ],
+     "answer": [
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Privind nucleul:",
+     "options": [
+      "In mucoasa tractului intestinal are o poziție centrală",
+      "Membrana nucleară este poroasă",
+      "Din cromatină, la sfârşitul diviziunii celulare se formează cromozomii",
+      "Membrana externă nucleară se continuă cu citomembranele reticulului endoplasmic",
+      "Nucleul controlează şi anabolismul celular"
+     ],
+     "answer": [
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile adevărate cu privire la transportul transmembranar, cu excepția:",
+     "options": [
+      "Jonii dintr-o soluție se găsesc într-o mişcare dezordonată datorită energiei lor",
+      "Ureea, încărcată electric, poate difuza prin membrana celulară",
+      "Canalele ionice au structură proteică şi permit pasajul ionic transmembranar",
+      "În endocitoză veziculele vor fuziona cu membrana celulară",
+      "În transportul activ primar este necesară hidroliza directă a ATP-ului"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "67. Selectați afirmațiile false privind potențialul de membrană:",
+     "options": [
+      "Termenul de repaus implică producerea de impulsuri de frecvență mică la nivel membranar",
+      "Perioada refractară absolută se datorează activării canalelor pentru Na+",
+      "Repolarizarea se datorează ieşirii K+ din celulă prin difuziune facilitată",
+      "Fibra musculară striată din regiunea antrului piloric are potențialul de acțiune sub 0mV.",
+      "Celulele excitabile se depolarizează rapid, dacă valoarea potențialului de membrană este redusă la un nivel critic"
+     ],
+     "answer": [
+      0,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Privind organitele comune celulei:",
+     "options": [
+      "Lizozomii sunt situați în hialoplasmă, lângă nucleu",
+      "Există şi ribozomi liberi",
+      "Membrana externă a mitocondriilor este plicaturată",
+      "Reticulul endoplasmatic reprezintă un sistem circulator canalicular în citoplasmă",
+      "Macrofagele sunt celule fagocitare"
+     ],
+     "answer": [
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile adevărate:",
+     "options": [
+      "Celule adipoase au formă cubică",
+      "Pinocitoza este o formă particulară de exocitoză",
+      "Prin transfer de energie se realizează cotransportul moleculelor şi a ionilor",
+      "Potențialul de acțiune, odată generat, va stimula, la rândul lui, zonele adiacente, propagându-se intr-un sens, până la completa depolarizare a membranei",
+      "Prin membrană se produce un schimb unidirecțional al produşilor de catabolism"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile adevărate, cu excepția:",
+     "options": [
+      "Dimensiunile celulei variază și în funcție de condițiile mediului extern",
+      "Membrana plasmatică este alcătuită şi din fosfolipide",
+      "Dictiozomii se află în apropierea nucleului, în zona pasivă a citoplasmei",
+      "Eritrocitele sunt anucleate",
+      "Potențialul de acțiune al celulei miocardice atriale are o durată mai mare decât potențialul de acțiune al neuronului"
+     ],
+     "answer": [
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Privind structura celulei:",
+     "options": [
+      "În citoplasmă se află granule de secreție",
+      "Neurofibrilele sunt elemente contractile din citoplasma neuronului, în axoplasmă şi în dendrite",
+      "Sistemele enzimatice ale mitocondriilor realizează sinteza ATP",
+      "Canalele membranare se închid sau de deschid în funcție de valoarea potențialului de acțiune",
+      "Cromozomii conțin și cantități mici de lipide"
+     ],
+     "answer": [
+      0,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Privind difuziunea:",
+     "options": [
+      "Este o forma de transport pasiv",
+      "Asigură răspândirea uniformă a moleculelor într-un volum dat de soluție sau gaz",
+      "Hormonul foliculostimulant pot difuza pasiv",
+      "Galactoza poate difuza pasiv",
+      "K+ şi CO2 pot difuza pasiv"
+     ],
+     "answer": [
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Privind mecanismele care nu utilizează proteine transportoare, selectați afirmaţiile false:",
+     "options": [
+      "Pentru producerea osmozei, membrana trebuie să fie mai permeabilă pentru apa dintr-o soluție",
+      "Moleculele nepolarizate pot difuza pasiv",
+      "Difuziunea facilitată are la bază acelaşi mecanism ca difuziunea și se referă la transport pasiv",
+      "Presiunea osmotică este direct proporțională cu numărul de particule de solvit",
+      "Difuziunea alcoolului etilic se realizează pasiv"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Privind trasportul activ transmembranar:",
+     "options": [
+      "Moleculele organice polarizate cu greutate mică traversează membrana cu consum de energie",
+      "Pentru funcționarea proteinei transportoare este necesară hidroliza directă a AMP-ului",
+      "Se asigură deplasarea şi a ionilor",
+      "În transportul activ primar proteinele transportoare se numesc pompe de cotrasport",
+      "Trasportul activ necesită cheltuială de energie"
+     ],
+     "answer": [
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile false privind potențialul de membrană:",
+     "options": [
+      "Are la bază o distribuție inegală de o parte şi de alta a membranei nucleare",
+      "Valoarea aproximativă a potențialului de echilibru pentru K+ este de -65mV până la -85 mV",
+      "Pompa de Na+/K+ are rol în valoarea potențialului membranar de repaus",
+      "Canalele membranare specifice se deschid şi la trecerea ureei",
+      "Perioada refractară se referă la valoarea minimă a potențialului de acțiune"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Privind structura nucleului:",
+     "options": [
+      "Cuprinde membrana nucleară, carioplasma şi un singur nucleol",
+      "Cromozomii conţin şi proteine bazice",
+      "Între membrana nucleară internă şi carioplasmă se află spațiul perinuclear",
+      "Carioplasma are în compoziție și o rețea de filamente subțiri",
+      "Membrana nucleară este trilaminată"
+     ],
+     "answer": [
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile adevărate privind celula:",
+     "options": [
+      "Epiteliul mucoasei ilconului prezintă cili",
+      "Membrana internă a mitocondriilor este plicaturată",
+      "Centrozomul este situat în apropierea nucleolului",
+      "Osmoza este difuziunea apei (solvent) dintr-o soluție",
+      "Odată atinsă valoarea prag, repolarizarea este spontană"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Privind celula, selectați afirmațiile adevărate:",
+     "options": [
+      "Cromozomii conțin în structură şi lizină",
+      "Fagocitoza este o formă particulară de endocitoză",
+      "În potențialul membranar de repaus, pompa ionică realizează un raport de 2K+ la 3 Na+",
+      "Toate celulele s-au specializat în producerea unor substanțe pe care la exportă și în mediul extern",
+      "Lizozomii au rol şi în digerarea de țesuturi"
+     ],
+     "answer": [
+      0,
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Privind celula:",
+     "options": [
+      "Miofibrilele conțin proteine contractile",
+      "Neurofibrilele au şi rol mecanic, de susținere",
+      "Există ribozomi liberi în matricea mitocondrială",
+      "Cromozomii conțin și proteine acide",
+      "Na+ intră în celulă când potențialul de membrană atinge valoarea prag 80. Selectați afirmaţiile false: A. Incluziunile citoplasmatice conțin și produşi de secreție B. Nucleul controlează şi anabolismul celular C. Mişcarea moleculară a unui gaz într-o soluție se numeşte difuziune D. Stimulii supraliminari determină o reacţie mai amplă decât stimulul prag, de exemplu la neuron E. Potențialul de acțiune al celulei miocardice ventriculare durează 5 ms"
+     ],
+     "answer": [
+      0,
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile false:",
+     "options": [
+      "Incluziunile citoplasmatice conțin și produşi de secreție",
+      "Nucleul controlează şi anabolismul celular",
+      "Mişcarea moleculară a unui gaz într-o soluție se numeşte difuziune",
+      "Stimulii supraliminari determină o reacţie mai amplă decât stimulul prag, de exemplu la neuron",
+      "Potențialul de acțiune al celulei miocardice ventriculare durează 5 ms"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "id": "țesuturi",
+   "title": "Țesuturi",
+   "questions": [
+    {
+     "q": "Privind țesăturile, care din afirmațiile următoare sunt adevărate:",
+     "options": [
+      "Sunt sisteme organizate de materie vie",
+      "Sunt formate din celule diferite",
+      "Sunt formate din celule care îndeplinesc în organism aceeaşi funcţie sau acelaşi grup de funcţii",
+      "Au celulele unite între ele prin „substanţă de ciment“",
+      "Au celulele unite între ele prin „substanţă fundamentală“"
+     ],
+     "answer": [
+      0,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Tipuri fundamentale de țesuturi sunt:",
+     "options": [
+      "Epitelial",
+      "Adipos",
+      "Muscular",
+      "Nervos",
+      "Osos"
+     ],
+     "answer": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Selectați răspunsurile corecte cu privire la țesutul epitelial:",
+     "options": [
+      "Poate fi de acoperire şi senzorial",
+      "Poate fi de acoperire, glandular şi senzorial",
+      "Epiteliul glandular este de tip endocrin şi exocrin",
+      "Epiteliile se clasifică funcţional în trei categorii",
+      "Poate fi moale, semidur sau fluid"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Epiteliul de acoperire poate fi:",
+     "options": [
+      "Simplu",
+      "Pseudostratificat",
+      "Glandular",
+      "Pluristratificat",
+      "Senzorial"
+     ],
+     "answer": [
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Tunica internă a vaselor sangvine și limfatice este de tip:",
+     "options": [
+      "Cubic simplu",
+      "Cilindric ciliat",
+      "Pavimentos simplu",
+      "Pavimentos pseudostratificat",
+      "Cilindric neciliat"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Epiteliul simplu cubic se găsește în:",
+     "options": [
+      "Mucoasa intestinală",
+      "Mucoasa bronhiolelor",
+      "Tunica medie a vaselor limfatice",
+      "Canalele glandelor exocrine",
+      "Epiderma"
+     ],
+     "answer": [
+      1
+     ]
+    },
+    {
+     "q": "Epiteliul simplu cilindric ciliat și neciliat se găsește în:",
+     "options": [
+      "Mucoasa bucală",
+      "Mucoasa bronhiolelor",
+      "Tunica internă a vaselor limfatice",
+      "Mucoasa intestinală",
+      "Tiroida"
+     ],
+     "answer": [
+      3
+     ]
+    },
+    {
+     "q": "Epiteliul pseudostratificat cilindric ciliat și neciliat se găsește în:",
+     "options": [
+      "Mucoasa bucală",
+      "Mucoasa bronhiolelor",
+      "Epiteliul traheal",
+      "Mucoasa intestinală",
+      "Canalele glandelor endocrine"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile corecte privind epiteliul pseudostratificat:",
+     "options": [
+      "Este format din celule cilindrice ciliate şi neciliate",
+      "Se întâlneşte în bronhiole",
+      "Este prezent în glandele endocrine",
+      "Se întâlneşte în trahee",
+      "Este de tranziţie"
+     ],
+     "answer": [
+      0,
+      3
+     ]
+    },
+    {
+     "q": "Epiteliul pluristratificat cubic și cilindric se găsește în:",
+     "options": [
+      "Epiderma",
+      "Mucoasa bronhiolelor",
+      "Epiteliul traheal",
+      "Canalele glandelor endocrine",
+      "Canale ale glandelor exocrine"
+     ],
+     "answer": [
+      4
+     ]
+    },
+    {
+     "q": "Epiderma este un epiteliu de acoperire:",
+     "options": [
+      "Pavimentos simplu",
+      "Pavimentos pluristratificat keratinizat",
+      "Cilindric ciliat",
+      "Nekeratinizat",
+      "Cilindric simplu"
+     ],
+     "answer": [
+      1
+     ]
+    },
+    {
+     "q": "Uroteliul este un țesut epitelial:",
+     "options": [
+      "Pavimentos simplu",
+      "Pavimentos pluristratificat keratinizat",
+      "Cilindric ciliat",
+      "Keratinizat",
+      "Pluristratificat de tranziţie"
+     ],
+     "answer": [
+      4
+     ]
+    },
+    {
+     "q": "Referitor la țesutul glandular:",
+     "options": [
+      "Este un țesut epitelial",
+      "Este un țesut senzorial",
+      "Poate fi de tip endocrin",
+      "Poate fi de tip exocrin",
+      "Poate fi numai de tip endocrin"
+     ],
+     "answer": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "După aşezarea celulelor secretorii, glandele endocrine sunt de tipul:",
+     "options": [
+      "În cordoane celulare (tiroida)",
+      "Folicular (tiroidă)",
+      "Folicular (paratiroide)",
+      "În cordoane celulare (adenohipofiza)",
+      "Simplu (tubular, acinos)"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Glandele exocrine pot fi:",
+     "options": [
+      "De tip folicular",
+      "În cordoane celulare (tiroida)",
+      "Mixt (pancreas)",
+      "De tip simplu (tubular, acinos)",
+      "De tip compus (tubulo-acinos)"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Care din afirmaţiile privind epiteliile senzoriale sunt corecte:",
+     "options": [
+      "Sunt formate din celule epiteliale specializate care intră în structura organelor de simț",
+      "Transformă stimulii în produşi de secreție",
+      "Sunt formate din celule sub formă de coloane",
+      "Intră în structura segmentului intermediar al organelor de simț",
+      "Sunt formate din celule sub forma de foliculi"
+     ],
+     "answer": [
+      0
+     ]
+    },
+    {
+     "q": "Tesutul conjunctiv se clasifică în:",
+     "options": [
+      "Tesut dur",
+      "Tesut de susținere",
+      "Fluid",
+      "Tesut semidur",
+      "Tesut moale"
+     ],
+     "answer": [
+      0,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Caracteristicile țesutului conjunctiv lax sunt:",
+     "options": [
+      "Este țesut conjunctiv moale",
+      "Se găseşte în ganglionii limfatici şi în splină",
+      "Se găseşte în jurul unor organe (rinichi, ochi)",
+      "Leagă unele organe",
+      "Se găseşte în tendoane, ligamente, aponevroze"
+     ],
+     "answer": [
+      0,
+      3
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile corecte cu privire la țesutul reticulat:",
+     "options": [
+      "Este localizat în muşchi",
+      "Este localizat în ganglionii limfatici şi splină",
+      "Se găseşte în structura hipodermului",
+      "Este prezent în tunica internă a vaselor sangvine",
+      "Este un țesut conjunctiv moale"
+     ],
+     "answer": [
+      1,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile corecte cu privire la țesutul adipos:",
+     "options": [
+      "Este localizat în ganglionii limfatici şi splina",
+      "Este o varietate de țesut conjunctiv semidur",
+      "Este situat în jurul unor organe (rinichi, ochi)",
+      "Intră în structura tendoanelor şi a aponevrozelor",
+      "Este localizat în hipoderm"
+     ],
+     "answer": [
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Țesutul fibros este localizat în:",
+     "options": [
+      "Splina",
+      "Ligamente",
+      "Ganglioni nervoşi",
+      "Tendoane şi aponevroze",
+      "Hipoderm"
+     ],
+     "answer": [
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Țesutul conjunctiv moale elastic este localizat în:",
+     "options": [
+      "Tunica interna a arterelor şi venelor",
+      "Aponevroze",
+      "Ochi",
+      "Tunica medie a arterelor şi venelor",
+      "Splina"
+     ],
+     "answer": [
+      3
+     ]
+    },
+    {
+     "q": "Țesutul cartilaginos hialin se găseşte în:",
+     "options": [
+      "Cartilajele traheale",
+      "Discurile intervertebrale",
+      "Cartilajele costale",
+      "Cartilaje laringiale",
+      "Epiglota"
+     ],
+     "answer": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile corecte cu privire la țesutul cartilaginos elasic:",
+     "options": [
+      "Este o varictate de țesut conjunctiv semidur",
+      "Alcătuieşte cartilajele costale",
+      "Intră în constituția discurilor intervertebrale",
+      "Se găseşte în epiglotă",
+      "Se găseşte în pavilionul urechii externe"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile corecte cu privire la țesutul cartilaginos fibros:",
+     "options": [
+      "Este o varietate de țesut conjunctiv semidur",
+      "Formează tendoane şi aponevroze",
+      "Intră în constituția epiglotei",
+      "Este prezent în meniscurile articulare",
+      "Este prezent în discurile intervertebrale"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Țesutul osos cuprinde:",
+     "options": [
+      "Țesut elastic",
+      "Țesut fibros",
+      "Țesut haversian",
+      "Țesut hialin",
+      "Țesut trabecular"
+     ],
+     "answer": [
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile corecte cu privire la țesutul osos compact:",
+     "options": [
+      "Se mai numeşte țesut osos haversian",
+      "Formează diafiza oaselor scurte",
+      "Formează epifizele şi interiorul oaselor scurte şi late",
+      "Formează diafizele oaselor lungi",
+      "Se află in diafiza humerusului"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Țesutul osos trabecular:",
+     "options": [
+      "Se mai numeşte țesut osos compact",
+      "Se mai numeşte țesut osos spongios",
+      "Se găseşte în epifizele oaselor lungi",
+      "Se găseşte în diafizele oaselor lungi",
+      "Se găseşte în diafizele oaselor scurte şi late"
+     ],
+     "answer": [
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile corecte cu privire la țesutul muscular:",
+     "options": [
+      "Este neted de tip cardiac",
+      "Este de tip striat visceral",
+      "Este de tip neted (muşchii scheletici)",
+      "Organitele specifice ale fibrei musculare sunt miofibrilele şi ribozomii",
+      "Țesutul muscular se împarte în: striat, neted şi striat de tip cardiac"
+     ],
+     "answer": [
+      4
+     ]
+    },
+    {
+     "q": "Alegeți variantele false:",
+     "options": [
+      "Celula glială face parte din țesuturile conjunctive",
+      "Țesutul epitelial de acoperire poate fi simplu, pseudostratificat sau pluristratificat",
+      "Țesutul fibros leagă diferite organe",
+      "Țesutul osos nu este țesut conjunctiv",
+      "Țesutul reticulat este țesut conjunctiv"
+     ],
+     "answer": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Țesutul nervos este alcătuit din celule:",
+     "options": [
+      "Neurofibrile",
+      "Nervoase (celule gliale)",
+      "Numite neuroni, lipsite de ribozomi",
+      "Nervoase (neuronii)",
+      "Celule gliale (nevroglia)"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Țesuturile se clasifică în următoarele tipuri fundamentale:",
+     "options": [
+      "Nervos",
+      "Senzorial",
+      "Glandular",
+      "Epitelial",
+      "Conjunctiv"
+     ],
+     "answer": [
+      0,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile false privind țesutul epitelial de acoperire:",
+     "options": [
+      "Este de acoperire, endocrin şi senzorial",
+      "Este de acoperire, secretor şi senzorial",
+      "Epiteliul de acoperire simplu pavimentos se află în tunica externă a arterelor",
+      "Epiteliul de acoperire pluristratificat pavimentos keratinizat se află în hipoderm",
+      "Epiteliul de acoperire simplu cubic se află în mucoasă bronhiolelor"
+     ],
+     "answer": [
+      0,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile adevărate privind țesutul epitelial de acoperire:",
+     "options": [
+      "Epiteliul pseudo-stratificat se află în uroteliu",
+      "Epiteliul pseudo-stratificat cilindric ciliat si neciliat se află în mucoasa traheală",
+      "Epiteliul simplu cilindric ciliat şi neciliat se află în mucoasa duodenului",
+      "Epiteliul simplu cilindric ciliat şi neciliat se află în uroteliu",
+      "Epiteliul pluristratificat cubic si cilindric se află în tunica internă a vaselor limfatice"
+     ],
+     "answer": [
+      2
+     ]
+    },
+    {
+     "q": "Privind țesutul epitelial secretor:",
+     "options": [
+      "Este de tip endocrin, exocrin şi senzorial",
+      "Tipul endocrin în cordoane celulare se află numai în lobul intermediar al hipofizei",
+      "Tipul exocrin folicular se află în adenohipofiză",
+      "Țesutul glandular pluricelular este de tip simplu și compus",
+      "Tipul endocrin folicular se află în tiroidă"
+     ],
+     "answer": [
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile adevărate privind țesutul conjunctiv:",
+     "options": [
+      "Este de tip moale, semidur şi dur",
+      "Este de tip moale, semidur, dur şi fluid",
+      "Țesutul moale lax se află în se află în epiderm",
+      "Țesutul moale lax leagă toate organele",
+      "Țesutul adipos se află în splină"
+     ],
+     "answer": [
+      1
+     ]
+    },
+    {
+     "q": "Tesutul conjuntiv moale:",
+     "options": [
+      "Tipul elastic se află în tunica internă a vaselor sanguine",
+      "Tipul adipos se află în hipoderm",
+      "Tipul fibros se află în muşchi",
+      "Tipul reticulat se află în splină",
+      "Tipul lax insoţeşte alte țesuturi"
+     ],
+     "answer": [
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile false privind țesutul conjunctiv moale:",
+     "options": [
+      "Tesutul conjunctiv lax se află în hipoderm",
+      "Tesutul conjunctiv reticulat se află în splină",
+      "Tesutul conjunctiv adipos se află în jurul rinichiului",
+      "Tesutul conjunctiv elastic se află în tunica medie a arterelor şi venelor",
+      "Tesutul conjunctiv fibros se află în ganglionii limfatici"
+     ],
+     "answer": [
+      0,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile false privind țesutul conjunctiv semidur:",
+     "options": [
+      "Tesutul cartilaginos fibros se află în meniscurile articulare",
+      "Tesutul cartilaginos elastic se află în epiglotă",
+      "Tesutul cartilaginos hialin se află în cartilajele laringiale",
+      "Tesutul cartilaginos se află în tendoanele muşchilor",
+      "Tesutul cartilaginos elastic se află în pavilionul urechii"
+     ],
+     "answer": [
+      3
+     ]
+    },
+    {
+     "q": "Privind țesutul muscular:",
+     "options": [
+      "Țesutul muscular striat se află în muşchii somatici",
+      "Țesutul muscular striat se află în hipoderm",
+      "Țesutul muscular neted se află în iris",
+      "Țesutul muscular neted intră în constituția viscerelor",
+      "Țesutul muscular neted se află în vasele limfatice"
+     ],
+     "answer": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "q": "Privind țesuturile, selectați afirmaţiile adevărate:",
+     "options": [
+      "Țesutul epitelial de acoperire simplu cubic se află în mucoasa bronhiolelor",
+      "Țesutul epitelial glandular endocrin folicular nu se află în adenohipofiză",
+      "Țesutul conjunctiv semidur cartilaginos fibros se află în meniscurile articulației genunchiului",
+      "Tesutul conjunctiv moale elastic se află în epiglotā",
+      "Musculatura somatică se află în arteriole"
+     ],
+     "answer": [
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Privind țesuturile, selectați afirmațiile adevărate, cu excepția:",
+     "options": [
+      "Țesutul epitelial de acoperire simplu cilindric ciliat şi neciliat nu se află în jejun",
+      "Țesutul epitelial de acoperire simplu cilindric ciliat şi neciliat se află în epiteliul traheal",
+      "Țesutul conjunctiv moale fibros se află şi în aponevroza palmară",
+      "Țesutul conjunctiv semidur cartilaginos elastic se află în pavilionul urechii",
+      "Țesutul epitelial secretor pluricelular este de tip simplu și compus"
+     ],
+     "answer": [
+      0,
+      1
+     ]
+    },
+    {
+     "q": "Selectați afirmațiile adevărate privind țesuturile:",
+     "options": [
+      "Țesutul epitelial de acoperire pluristratificat cubic și cilindric se află în canalele glandelor endocrine",
+      "Țesutul conjunctiv moale elastic însoțește alte țesuturi",
+      "Țesutul conjunctiv dur osos spongios se află în epifiza coastelor",
+      "Țesutul epitelial glandular mixt se află în pancreas",
+      "Țesutul conjunctiv semidur cartilaginos hialin se află în cartilajele faringiene"
+     ],
+     "answer": [
+      3
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile adevărate, cu excepția:",
+     "options": [
+      "Diafiza fibulei este alcătuită din țesut conjunctiv dur osos compact",
+      "În tunica externă a arterelor se află țesut epitelial de acoperire simplu pavimentos",
+      "Epiteliul mucoasei bucale este de tip pluristratificat cilindric nekeratinizat",
+      "În ganglionii limfatici inghinali se află țesut conjunctiv moale reticulat",
+      "Ligamentele conțin țesut conjunctiv moale fibros"
+     ],
+     "answer": [
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Tesutul conjunctiv moale adipos se află în:",
+     "options": [
+      "În jurul rinichilor",
+      "În jurul pancreasului",
+      "În derm",
+      "Tunica internă a venelor",
+      "În jurul ochilor"
+     ],
+     "answer": [
+      0,
+      4
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile adevărate:",
+     "options": [
+      "Glandele paratiroide prezintă țesut epitelial tipul folicular endocrin secretor",
+      "Epifiza distală a tibiei conține țesut conjunctiv dur osos trabecular",
+      "Discurile intervertebrale conțin țesut conjunctiv semidur cartilaginos fibros",
+      "Uroteliul este un țesut epitelial de acoperire psedostratificat de tranziţie",
+      "Irisul conține fibre musculare de tip somatic"
+     ],
+     "answer": [
+      1,
+      2
+     ]
+    },
+    {
+     "q": "Selectați afirmaţiile adevărate, cu excepția:",
+     "options": [
+      "Capilarele limfatice conțin țesut epitelial de acoperire simplu pavimentos în tunica internă",
+      "Tendonul de inserție a muşchiului triceps brahial conține țesut conjunctiv moale fibros",
+      "Tesutul senzorial este de tip glandular mixt",
+      "Vena femurală conține țesut conjunctiv moale elastic în tunica internă",
+      "În pavilionul urechii medii se află țesut conjunctiv semidur cartilaginos elastic"
+     ],
+     "answer": [
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "q": "Țesutul conjunctiv:",
+     "options": [
+      "Este moale reticulat în splină",
+      "Este moale lax însoțind țesutul epitelial",
+      "Este moale fibros în epiglotă",
+      "Este moale adipos subcutanat",
+      "Este moale elastic în tunica externă a venelor"
+     ],
+     "answer": [
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "q": "Tesutul epitelial secretor:",
+     "options": [
+      "Este şi de tip exocrin (pluristratificat)",
+      "Este şi de tip endocrin în cordoane (adenohipofiza)",
+      "Este şi de tip mixt (ovar)",
+      "Este şi de tip mixt folicular (testicul)",
+      "Este şi de tip exocrin compus (tubulo-acinos)"
+     ],
+     "answer": [
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "q": "Privind țesuturile, afirmaţiile false sunt:",
+     "options": [
+      "Cartilajele traheale conțin țesut conjunctiv semidur cartilaginos fibros",
+      "Epiteliul traheal este de tip pseudostratificat cilindric",
+      "Mucoasa jejunală conține epiteliul de acoperire simplu cilindric",
+      "Sternul conține în interior țesut conjunctiv dur osos trabecular",
+      "În viscere se află țesut muscular striat"
+     ],
+     "answer": [
+      0,
+      4
+     ]
+    }
+   ]
+  }
+ ]
+};
+
+/* ============================ App logic ============================ */
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const letter = i => String.fromCharCode(65 + i);
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const withChapter = c => c.questions.map(q => ({ ...q, chapter: c.title }));
+let state = null;
+
+/* ---------- Home dashboard ---------- */
+const MODES = [
+  { scope: 'all',     order: 'order',  title: 'All Questions — In Order', desc: 'Every question from every chapter, in original order.', icon: '📋' },
+  { scope: 'all',     order: 'random', title: 'All Questions — Random',   desc: 'Every question from every chapter, shuffled.',          icon: '🔀' },
+  { scope: 'chapter', order: 'order',  title: 'By Chapter — In Order',    desc: 'Pick a chapter and answer it in order.',                icon: '📖' },
+  { scope: 'chapter', order: 'random', title: 'By Chapter — Random',      desc: 'Pick a chapter and answer it shuffled.',                icon: '🎲' },
+];
+
+function renderHome() {
+  state = null;
+  const total = QUIZ_DATA.chapters.reduce((n, c) => n + c.questions.length, 0);
+  app.innerHTML = `
+    <header class="text-center mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-indigo-700">${esc(QUIZ_DATA.title)}</h1>
+      <p class="text-slate-500 mt-2">${QUIZ_DATA.chapters.length} chapters · ${total} questions</p>
+    </header>
+    <div class="grid gap-4 sm:grid-cols-2">
+      ${MODES.map((m, i) => `
+        <button onclick="pickMode(${i})" class="text-left bg-white rounded-2xl p-5 shadow-sm border border-slate-200 hover:border-indigo-400 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-indigo-400">
+          <div class="text-3xl mb-2">${m.icon}</div>
+          <div class="font-semibold text-lg">${m.title}</div>
+          <div class="text-sm text-slate-500 mt-1">${m.desc}</div>
+        </button>`).join('')}
+    </div>`;
+}
+
+function pickMode(i) {
+  const m = MODES[i];
+  if (m.scope === 'all') return start(m.order, QUIZ_DATA.chapters.flatMap(withChapter));
+  app.innerHTML = `
+    <button onclick="renderHome()" class="text-indigo-600 hover:underline mb-4">← Back</button>
+    <h2 class="text-2xl font-bold mb-1">Choose a chapter</h2>
+    <p class="text-slate-500 mb-5">${m.order === 'order' ? 'Questions will be asked in order.' : 'Questions will be shuffled.'}</p>
+    <div class="grid gap-3">
+      ${QUIZ_DATA.chapters.map((c, ci) => `
+        <button onclick="pickChapter(${i}, ${ci})" class="flex items-center justify-between bg-white rounded-xl p-4 shadow-sm border border-slate-200 hover:border-indigo-400 hover:shadow-md transition text-left">
+          <span class="font-medium">${esc(c.title)}</span>
+          <span class="text-sm text-slate-500 whitespace-nowrap ml-3">${c.questions.length} questions</span>
+        </button>`).join('')}
+    </div>`;
+}
+const pickChapter = (mi, ci) => start(MODES[mi].order, withChapter(QUIZ_DATA.chapters[ci]));
+
+/* ---------- Quiz ---------- */
+function start(order, qs) {
+  state = { order, source: qs, qs: order === 'random' ? shuffle(qs) : [...qs], i: 0, correct: 0, selected: new Set(), answered: false, ok: false };
+  renderQuestion();
+}
+
+function optionClass(q, k) {
+  const sel = state.selected.has(k), right = q.answer.includes(k);
+  if (!state.answered) return sel ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 bg-white hover:border-indigo-300 hover:bg-slate-50';
+  if (right && sel) return 'border-green-500 bg-green-100 text-green-900';
+  if (!right && sel) return 'border-red-500 bg-red-100 text-red-900';
+  if (right) return 'border-green-500 border-dashed bg-green-50 text-green-900';
+  return 'border-slate-200 bg-white opacity-60';
+}
+function optionMark(q, k) {
+  if (!state.answered) return '';
+  const sel = state.selected.has(k), right = q.answer.includes(k);
+  if (right && sel) return '✓';
+  if (!right && sel) return '✗';
+  return right ? '<span class="text-xs font-medium">missed</span>' : '';
+}
+
+function renderQuestion() {
+  const q = state.qs[state.i], n = state.qs.length, multi = q.answer.length > 1;
+  const last = state.i === n - 1;
+  const correctLetters = q.answer.map(letter).join(', ');
+  app.innerHTML = `
+    <div class="flex items-center justify-between mb-2 text-sm text-slate-500">
+      <span class="font-medium text-slate-700">Question ${state.i + 1} of ${n}</span>
+      <button onclick="if(confirm('Quit this quiz?')) renderHome()" class="hover:text-red-600">Quit ✕</button>
+    </div>
+    <div class="h-2.5 bg-slate-200 rounded-full overflow-hidden mb-6">
+      <div class="h-full bg-indigo-600 rounded-full transition-all duration-300" style="width:${Math.round(state.i / n * 100)}%"></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-7">
+      <div class="text-xs uppercase tracking-wide text-indigo-500 font-semibold mb-2">${esc(q.chapter)}</div>
+      <h2 class="text-xl font-semibold mb-1">${esc(q.q)}</h2>
+      ${multi ? '<p class="text-sm text-slate-500 mb-4">Select all correct answers, then press “Check answer”.</p>' : '<div class="mb-4"></div>'}
+      <div class="grid gap-3">
+        ${q.options.map((t, k) => `
+          <button ${state.answered ? 'disabled' : ''} onclick="choose(${k})" class="flex items-start gap-3 text-left rounded-xl border-2 p-3.5 transition ${optionClass(q, k)}">
+            <span class="font-bold w-6 shrink-0">${letter(k)}.</span>
+            <span class="flex-1">${esc(t)}</span>
+            <span class="font-bold shrink-0">${optionMark(q, k)}</span>
+          </button>`).join('')}
+      </div>
+      ${state.answered ? `
+        <div class="mt-5 rounded-xl p-3.5 text-sm font-medium ${state.ok ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}">
+          ${state.ok ? '✓ Correct!' : `✗ Incorrect. Correct answer${q.answer.length > 1 ? 's' : ''}: ${correctLetters}`}
+        </div>` : ''}
+      <div class="mt-5 flex justify-end">
+        ${state.answered
+          ? `<button onclick="next()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-sm">${last ? 'See Results' : 'Next Question'} →</button>`
+          : multi ? `<button onclick="check()" ${state.selected.size ? '' : 'disabled'} class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold px-6 py-2.5 rounded-xl shadow-sm">Check answer</button>` : ''}
+      </div>
+    </div>`;
+}
+
+function choose(k) {
+  if (state.answered) return;
+  const q = state.qs[state.i];
+  if (q.answer.length > 1) {
+    state.selected.has(k) ? state.selected.delete(k) : state.selected.add(k);
+    renderQuestion();
+  } else {
+    state.selected = new Set([k]);
+    grade();
+  }
+}
+const check = () => { if (state.selected.size) grade(); };
+
+function grade() {
+  const q = state.qs[state.i];
+  state.ok = state.selected.size === q.answer.length && q.answer.every(k => state.selected.has(k));
+  if (state.ok) state.correct++;
+  state.answered = true;
+  renderQuestion();
+}
+
+function next() {
+  state.i++;
+  state.selected = new Set();
+  state.answered = false;
+  state.i >= state.qs.length ? renderResults() : renderQuestion();
+}
+
+/* ---------- Results ---------- */
+function renderResults() {
+  const n = state.qs.length, c = state.correct, w = n - c, pct = Math.round(c / n * 100);
+  const msg = pct >= 90 ? 'Outstanding! 🏆' : pct >= 70 ? 'Great job! 🎉' : pct >= 50 ? 'Not bad — keep practicing! 💪' : 'Keep going, you’ll get there! 📚';
+  const color = pct >= 70 ? '#16a34a' : pct >= 50 ? '#f59e0b' : '#dc2626';
+  const again = state;
+  app.innerHTML = `
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-10 text-center">
+      <h2 class="text-2xl font-bold mb-6">Quiz complete</h2>
+      <div class="mx-auto w-40 h-40 rounded-full grid place-items-center" style="background:conic-gradient(${color} ${pct * 3.6}deg, #e2e8f0 0deg)">
+        <div class="w-32 h-32 rounded-full bg-white grid place-items-center">
+          <div><div class="text-4xl font-bold">${pct}%</div><div class="text-sm text-slate-500">${c} / ${n}</div></div>
+        </div>
+      </div>
+      <p class="mt-5 text-lg font-medium">${msg}</p>
+      <div class="grid grid-cols-3 gap-3 mt-6">
+        <div class="rounded-xl bg-green-50 text-green-800 p-3"><div class="text-2xl font-bold">${c}</div><div class="text-xs uppercase">Correct</div></div>
+        <div class="rounded-xl bg-red-50 text-red-800 p-3"><div class="text-2xl font-bold">${w}</div><div class="text-xs uppercase">Incorrect</div></div>
+        <div class="rounded-xl bg-slate-100 text-slate-700 p-3"><div class="text-2xl font-bold">${n}</div><div class="text-xs uppercase">Total</div></div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+        <button onclick="start('${again.order}', state.source)" class="px-6 py-2.5 rounded-xl border-2 border-indigo-600 text-indigo-700 font-semibold hover:bg-indigo-50">Try again</button>
+        <button onclick="renderHome()" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700">Back to Home</button>
+      </div>
+    </div>`;
+}
+
+renderHome();
+</script>
+</body>
+</html>
